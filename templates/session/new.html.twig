@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Session{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-4 mx-auto">
+                <h1 class="text-center">Ajouter Session</h1>
+
+                {{ include('session/_form.html.twig') }}
+            
+                <a href="{{ path('session_index') }}" class="btn btn-primary btn-block">Retour</a>
+            
+            </div>
+        </div>
+    </div>
+{% endblock %}

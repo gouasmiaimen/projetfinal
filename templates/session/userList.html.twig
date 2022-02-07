@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User index{% endblock %}
+
+{% block body %}
+    <div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="text-center">Session</h1>
+
+      <table class="table">
+        <tbody>
+          <tr>
+            <th>Id</th>
+            <td>{{ session.id }}</td>
+          </tr>
+          <tr>
+            <th>Label</th>
+            <td>{{ session.label }}</td>
+          </tr>
+          <tr>
+            <th>Photo</th>
+            <td>
+              <img
+                width="50px"
+                height="50px"
+                src="{{ asset('assets/uploads/sessions/') }}{{ session.photo }}"
+                alt=""
+                class="rounded rounded-circle border border-5 border-dark"
+              />
+            </td>
+          </tr>
+          <tr>
+            <th>Description</th>
+            <td>{{ session.description }}</td>
+          </tr>
+          <tr>
+            <th>Prix</th>
+            <td>{{ session.prix }} €</td>
+          </tr>
+          <tr>
+            <th>Date Debut</th>
+            <td>
+              {{ session.dateDebut ? session.dateDebut|date('d-m-Y') : '' }}
+            </td>
+          </tr>
+          <tr>
+            <th>Date Fin</th>
+            <td>{{ session.dateFin ? session.dateFin|date('d-m-Y') : '' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center">Liste des utilisateurs dans session</h1>
+    <div class="text-center col-4 mx-auto">
+        <form action="{{ path('session_list', {'id': session.id}) }}" method="post">
+         <select name="userSession" id="userSession" class="form-control">
+                    {% for utilisateur in userDb %}
+                        <option value="{{ utilisateur.id }}">{{utilisateur.prenom}} {{utilisateur.nom}}</option>
+                    {% endfor %}
+                    
+                </select>
+        <button type="submit" class="btn btn-success my-2"><i class="fa fa-plus"></i> Ajouter</button>
+    </form>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Password</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Photo</th>
+                <th>DateCreation</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <ul>
+                        {% set monRole = '' %}
+                        {% for role in user.roles %}                        
+                            {% if role =="ROLE_ADMIN" %}
+                                {% set monRole = 'Administrateur' %}
+                            {% elseif role =="ROLE_FORM" %}
+                                {% set monRole = 'Formateur' %}
+                            {% else %}
+                                {% set monRole = 'Apprenant' %}
+                            {% endif %}
+                            <li>{{monRole}}</li>
+                        {% endfor %}
+                        
+                    </ul>
+                </td>
+                <td>{{ user.password }}</td>
+                <td>{{ user.nom }}</td>
+                <td>{{ user.prenom }}</td>
+                <td><img width="50px" height="50px" src="{{ asset('assets/uploads/users/') }}{{ user.photo }}" alt="" class="rounded rounded-circle border border-5 border-dark"></td>
+                <td>{{ user.dateCreation ? user.dateCreation|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('user_show', {'id': user.id}) }}" class="btn btn-primary"><i class="fa fa-eye"></i></a>
+                    <a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">pas d'utilisateurs</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+            </div>
+        </div>
+    </div>
+
+    
+{% endblock %}

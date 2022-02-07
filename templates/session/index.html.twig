@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Session index{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center">Liste des Sessions</h1>
+            <div class="text-center">
+               
+                <a href="{{ path('session_new') }}" class="btn btn-success my-2"><i class="fa fa-plus"></i> Ajouter</a>
+
+            </div>
+        
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Label</th>
+                        <th>Photo</th>
+                        <th>Description</th>
+                        <th>Prix</th>
+                        <th>DateDebut</th>
+                        <th>DateFin</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for session in sessions %}
+                    <tr>
+                        <td>{{ session.id }}</td>
+                        <td>{{ session.label }}</td>
+                        <td><img width="50px" height="50px" src="{{ asset('assets/uploads/sessions/') }}{{ session.photo }}" alt="" class="rounded rounded-circle border border-5 border-dark"></td>
+                        <td>{{ session.description }}</td>
+                        <td>{{ session.prix }} €</td>
+                        <td>{{ session.dateDebut ? session.dateDebut|date('d-m-Y') : '' }}</td>
+                        <td>{{ session.dateFin ? session.dateFin|date('d-m-Y') : '' }}</td>
+                        <td>
+                            <a href="{{ path('session_list', {'id': session.id}) }}" class="btn btn-secondary"><i class="fa fa-user"></i></a>
+                            <a href="{{ path('session_show', {'id': session.id}) }}" class="btn btn-primary"><i class="fa fa-eye"></i></a>
+                            <a href="{{ path('session_edit', {'id': session.id}) }}" class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

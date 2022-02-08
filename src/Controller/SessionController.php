@@ -32,7 +32,7 @@ class SessionController extends AbstractController
     /**
      * @Route("/new", name="session_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $session = new Session();
         $session->setPhoto('');
@@ -99,7 +99,7 @@ class SessionController extends AbstractController
     {
         
         $listeUsers=$session->getUsers();
-        $usersDb= $userRepository->findAll();
+        $usersDb= $userRepository->findByRole('ROLE_USER');
 
         //ajout utilisateur à une session de formation
         $userSession=$request->get('userSession');

@@ -6,9 +6,11 @@ use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass=SessionRepository::class)
+ * @ApiResource
  */
 class Session
 {
@@ -59,6 +61,12 @@ class Session
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="sessions")
      */
     private $users;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="formateurSession")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $formateur;
 
     public function __construct()
     {
@@ -174,6 +182,18 @@ class Session
     public function removeUser(User $user): self
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    public function getFormateur(): ?User
+    {
+        return $this->formateur;
+    }
+
+    public function setFormateur(?User $formateur): self
+    {
+        $this->formateur = $formateur;
 
         return $this;
     }

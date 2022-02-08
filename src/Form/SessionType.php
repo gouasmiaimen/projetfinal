@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Categorie;
 use App\Entity\Session;
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -39,6 +41,13 @@ class SessionType extends AbstractType
                 'class' => Categorie::class,
                 'choice_label'=>'label',
                 'attr'=>['class'=>'form-control']
+            ])
+            ->add('formateur', EntityType::class, [
+                'class' => User::class,
+                'choice_label'=>function(User $user){
+                    return $user->getPrenom()." ".$user->getNom();
+                },
+                'attr'=>['class'=>'form-control'],
             ])
         ;
     }

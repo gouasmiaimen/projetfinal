@@ -21,8 +21,9 @@
                         <th>Photo</th>
                         <th>Description</th>
                         <th>Prix</th>
-                        <th>DateDebut</th>
-                        <th>DateFin</th>
+                        <th>Date Debut</th>
+                        <th>Date Fin</th>
+                        <th>Formateur</th>
                         <th>actions</th>
                     </tr>
                 </thead>
@@ -36,6 +37,9 @@
                         <td>{{ session.prix }} €</td>
                         <td>{{ session.dateDebut ? session.dateDebut|date('d-m-Y') : '' }}</td>
                         <td>{{ session.dateFin ? session.dateFin|date('d-m-Y') : '' }}</td>
+                        <td>
+                            {{ session.formateur.prenom }} {{ session.formateur.nom }}
+                        </td>
                         <td>
                             <a href="{{ path('session_list', {'id': session.id}) }}" class="btn btn-secondary"><i class="fa fa-user"></i></a>
                             <a href="{{ path('session_show', {'id': session.id}) }}" class="btn btn-primary"><i class="fa fa-eye"></i></a>

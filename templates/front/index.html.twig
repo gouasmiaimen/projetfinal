@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %} {% block title %}User index{% endblock %} {%
+block body %}
+<script>
+  function supprimerUser(idUser) {
+    //alert(idUser);
+    $.ajax({
+      url: "http://127.0.0.1:8000/api/users/"+idUser,
+      type: "DELETE",
+      success: function (data) {
+        $("#msg").html("utilisateur supprimé avec succée");
+        loadUsers();
+      },
+      error: function (jqXhr, textStatus, errorMessage) {
+        $("#msg").html("Problème de suppression");
+      },
+    });
+  }
+  function loadUsers(){
+    var content="";
+    $.ajax({
+        url: "http://127.0.0.1:8000/api/users.json",
+        type: "GET",
+        success: function (data) {
+            
+         data.map(
+             x => {
+                content+="<tr>";
+                    content+="<td>"+x.id+"</td>";
+                    content+="<td>"+x.email+"</td>";
+                    content+="<td>"+monRole(x.roles)+"</td>";
+                    content+="<td>"+x.password+"</td>";
+                    content+="<td>"+x.nom+"</td>";
+                    content+="<td>"+x.prenom+"</td>";
+                    content+="<td><img width='50px' height='50px' src='/assets/uploads/users/"+x.photo+"' alt='' class='rounded rounded-circle border border-5 border-dark'></td>";
+                    content+="<td>"+new Date(x.dateCreation).toLocaleDateString("fr")+"</td>";
+                    content+="<td><a href='/user/"+x.id+"' class='btn btn-primary'><i class='fa fa-eye'></i></a><a href='/user/"+x.id+"/edit' class='btn btn-warning'><i class='fa fa-edit'></i></a><button id='"+x.id+"' onclick='supprimerUser(this.id)' class='btn btn-danger'><i class='fa fa-trash'></i></button></td>";
+                content+="</tr>";
+
+             }
+         );
+         //console.log(content);
+         $('tbody').html(content);
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+          $("#msg").html("Problème de chargement");
+        },
+      });
+  }
+  function monRole(roles){
+      var mesRoles="<ul>";
+      roles.map(x => {
+        switch (x) {
+            case 'ROLE_ADMIN':
+                x = "Administrateur";
+                break;
+            case 'ROLE_FORM':
+                x = "Formateur";
+                break;
+            default:
+                x = "Apprenant";
+                break;
+        };
+        mesRoles+="<li>"+x+"</li>"
+
+      })
+      mesRoles+="<ul>";
+    return mesRoles;
+
+  }
+</script>
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="text-center">Liste des utilisateurs</h1>
+      <div class="text-center">
+        <a href="{{ path('user_new') }}" class="btn btn-success"
+          ><i class="fa fa-plus"></i> Ajouter</a
+        >
+        <br />
+        <span id="msg" class="alert"></span>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Password</th>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Photo</th>
+            <th>DateCreation</th>
+            <th>actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <ul>
+                {% set monRole = '' %} {% for role in user.roles %} {% if role
+                =="ROLE_ADMIN" %} {% set monRole = 'Administrateur' %} {% elseif
+                role =="ROLE_FORM" %} {% set monRole = 'Formateur' %} {% else %}
+                {% set monRole = 'Apprenant' %} {% endif %}
+                <li>{{ monRole }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>{{ user.password }}</td>
+            <td>{{ user.nom }}</td>
+            <td>{{ user.prenom }}</td>
+            <td>
+              <img
+                width="50px"
+                height="50px"
+                src="{{ asset('assets/uploads/users/') }}{{ user.photo }}"
+                alt=""
+                class="rounded rounded-circle border border-5 border-dark"
+              />
+            </td>
+            <td>
+              {{ user.dateCreation ? user.dateCreation|date('Y-m-d') : '' }}
+            </td>
+            <td>
+              <a
+                href="{{ path('user_show', { id: user.id }) }}"
+                class="btn btn-primary"
+                ><i class="fa fa-eye"></i
+              ></a>
+              <a
+                href="{{ path('user_edit', { id: user.id }) }}"
+                class="btn btn-warning"
+                ><i class="fa fa-edit"></i
+              ></a>
+              <button
+                id="{{ user.id }}"
+                onclick="supprimerUser(this.id)"
+                class="btn btn-danger"
+              >
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="9">pas d'utilisateurs</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

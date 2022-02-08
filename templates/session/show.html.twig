@@ -45,6 +45,13 @@ body %}
             <th>Date Fin</th>
             <td>{{ session.dateFin ? session.dateFin|date('d-m-Y') : '' }}</td>
           </tr>
+          <tr>
+            <th>Formateur</th>
+            <td>{{ session.formateur.prenom }} {{ session.formateur.nom }}</td>
+          </tr>
+
+                            
+                      
         </tbody>
       </table>
 

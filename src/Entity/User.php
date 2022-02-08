@@ -8,9 +8,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ApiResource
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -62,9 +64,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $sessions;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Session::class, mappedBy="formateur")
+     */
+    private $formateurSession;
+
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
+        $this->formateurSession = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -226,6 +234,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->sessions->removeElement($session)) {
             $session->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Session[]
+     */
+    public function getFormateurSession(): Collection
+    {
+        return $this->formateurSession;
+    }
+
+    public function addFormateurSession(Session $formateurSession): self
+    {
+        if (!$this->formateurSession->contains($formateurSession)) {
+            $this->formateurSession[] = $formateurSession;
+            $formateurSession->setFormateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormateurSession(Session $formateurSession): self
+    {
+        if ($this->formateurSession->removeElement($formateurSession)) {
+            // set the owning side to null (unless already changed)
+            if ($formateurSession->getFormateur() === $this) {
+                $formateurSession->setFormateur(null);
+            }
         }
 
         return $this;

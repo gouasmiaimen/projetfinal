@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categorie index{% endblock %}
+
+{% block body %}
+<script>
+    $(document).ready(function(){
+        loadCategories();
+    });
+    function loadCategories(){
+        var content="";
+        $.ajax({
+            url: "http://127.0.0.1:8000/api/categories.json",
+            type: "GET",
+            success: function (data) {
+                
+             data.map(
+                 x => {
+                    content+="<tr>";
+                        content+="<td>"+x.id+"</td>";
+                        content+="<td>"+x.label+"</td>";
+                        content+="<td><img width='50px' height='50px' src='/assets/uploads/categories/"+x.photo+"' alt='' class='rounded rounded-circle border border-5 border-dark'></td>";
+                        content+="<td>"+x.description+"</td>";
+                        content+="<td><button class='btn btn-primary' data-toggle='modal' data-target='#exampleModalCenter' onclick='loadDetailCategories("+x.id+")'><i class='fa fa-eye'></i></button><a href='/categorie/"+x.id+"/edit' class='btn btn-warning'><i class='fa fa-edit'></i></a><button id='"+x.id+"' onclick='supprimerCategorie(this.id)' class='btn btn-danger'><i class='fa fa-trash'></i></button></td>";
+                    content+="</tr>";
+    
+                 }
+             );
+             //console.log(content);
+             $('tbody').html(content);
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+              $("#msg").html("Problème de chargement");
+            },
+          });
+      }
+      function loadDetailCategories(id){
+        var content="";
+        $.ajax({
+            url: "http://127.0.0.1:8000/api/categories/"+id+".json",
+            type: "GET",
+            success: function (data) {
+                
+            
+                content+="<img width='50px' height='50px' src='/assets/uploads/categories/"+data.photo+"' alt='' class='rounded rounded-circle border border-5 border-dark'>";
+                    content+="<ul>";
+                        content+="<li>ID: "+data.id+"</li>";
+                        content+="<li>Label: "+data.label+"</li>";
+                        content+="<li>Déscription: "+data.description+"</li>";
+                    content+="</ul>";
+    
+                 
+          
+             //console.log(content);
+             $('#detail').html(content);
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+              $("#msg").html("Problème de chargement");
+            },
+          });
+      }
+</script>
+   <div class="container">
+       <div class="row">
+           <div class="col-12">
+            <h1 class="text-center">Liste des catégories</h1>
+            <div class="text-center">
+                <a href="{{ path('categorie_new') }}" class="btn btn-success my-3"><i class="fa fa-plus"></i> Ajout Catégorie</a>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Label</th>
+                        <th>Photo</th>
+                        <th>Description</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+      
+              
+                </tbody>
+            </table>
+           </div>
+       </div>
+   </div>
+
+   <!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Détails catégorie</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="detail">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends 'base.html.twig' %} {% block title %}Hello ShopController!{% endblock
+%} {% block body %}
+<style>
+  .example-wrapper {
+    margin: 1em auto;
+    max-width: 800px;
+    width: 95%;
+    font: 18px/1.5 sans-serif;
+  }
+  .example-wrapper code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+  }
+  .card.mb-4.box-shadow {
+    height: 96%;
+    padding: 10px;
+}
+</style>
+<script>
+  $(document).ready(function () {
+    loadProduits();
+  });
+  function loadProduits() {
+    var content = "";
+    $.ajax({
+      url: "https://fakestoreapi.com/products",
+      type: "GET",
+      success: function (data) {
+          var desc="";
+        data.map((x) => {
+            desc=x.description;
+            if(desc.length > 50){
+                desc= desc.substring(0,50)+'...';
+            }
+          content += "<div class='col-md-4'>";
+          content += "<div class='card mb-4 box-shadow'>";
+            content += "<h6 class='text-muted text-right'> Votes: "+x.rating.rate+" / "+x.rating.count+"</h6>";
+          content +=
+            "<img class='card-img-top' data-src='"+x.image+"' alt='Thumbnail [100%x225]' style='height: 225px; width: 100%; display: block;' src='"+x.image+"' data-holder-rendered='true'>";
+          content += "<div class='card-body'>";
+          content +=
+            "<h6 class='card-text'> Category: "+x.category+"</h6>";
+            content +=
+            "<h5 class='card-title'>"+x.title+"</h5>";
+            content +=
+            "<p class='card-text text-justify'>"+desc+"</p>";
+          content +=
+            "<div class='d-flex justify-content-between align-items-center'>";
+          content += "<div class='btn-group'>";
+          content +=
+            "<button type='button' class='btn btn-sm btn-outline-secondary'><i class='fa fa-eye'></i></button>";
+
+          content += "</div>";
+          content += "<h5 class='text-danger'>"+x.price+" €</h5>";
+          content += "</div>";
+          content += "</div>";
+          content += "</div>";
+          content += "</div>";
+        });
+        //console.log(content);
+        $("#myShop").html(content);
+      },
+      error: function (jqXhr, textStatus, errorMessage) {
+        console.log(errorMessage);
+      },
+    });
+  }
+
+  function loadCategries(){
+    var content = "";
+    $.ajax({
+      url: "https://fakestoreapi.com/products/categories",
+      type: "GET",
+      success: function (data) {
+        content += "<option value='tous'>tout les produits</option>";
+        data.map((x) => {
+            
+     var categorie=x.replace(" ", "%20");
+     categorie=x.replace("'", "`");
+          content += "<option value='"+categorie+"'>"+x+"</option>";
+        });
+        //console.log(content);
+        $("#listeCategories").html(content);
+      },
+      error: function (jqXhr, textStatus, errorMessage) {
+        console.log(errorMessage);
+      },
+    });
+  }
+  $("#listeCategories").ready(function(){
+      loadCategries();
+  })
+
+  function loadProduitsParCategorie(categorie) {
+    categorie=categorie.replace("`", "'");
+    var content = "";
+    var myUrl="";
+    if(categorie=="tous"){
+        myUrl= "https://fakestoreapi.com/products";
+    }
+    else{
+        myUrl= "https://fakestoreapi.com/products/category/"+categorie;
+    }
+    $.ajax({
+      url: myUrl,
+      type: "GET",
+      success: function (data) {
+          var desc="";
+        data.map((x) => {
+            desc=x.description;
+            if(desc.length > 50){
+                desc= desc.substring(0,50)+'...';
+            }
+          content += "<div class='col-md-4'>";
+          content += "<div class='card mb-4 box-shadow'>";
+            content += "<h6 class='text-muted text-right'> Votes: "+x.rating.rate+" / "+x.rating.count+"</h6>";
+          content +=
+            "<img class='card-img-top' data-src='"+x.image+"' alt='Thumbnail [100%x225]' style='height: 225px; width: 100%; display: block;' src='"+x.image+"' data-holder-rendered='true'>";
+          content += "<div class='card-body'>";
+          content +=
+            "<h6 class='card-text'> Category: "+x.category+"</h6>";
+            content +=
+            "<h5 class='card-title'>"+x.title+"</h5>";
+            content +=
+            "<p class='card-text text-justify'>"+desc+"</p>";
+          content +=
+            "<div class='d-flex justify-content-between align-items-center'>";
+          content += "<div class='btn-group'>";
+          content +=
+            "<button type='button' class='btn btn-sm btn-outline-secondary'><i class='fa fa-eye'></i></button>";
+
+          content += "</div>";
+          content += "<h5 class='text-danger'>"+x.price+" €</h5>";
+          content += "</div>";
+          content += "</div>";
+          content += "</div>";
+          content += "</div>";
+        });
+        //console.log(content);
+        $("#myShop").html(content);
+      },
+      error: function (jqXhr, textStatus, errorMessage) {
+        console.log(errorMessage);
+      },
+    });
+  }
+</script>
+<div class="album py-5 bg-light">
+  <div class="container">
+      <h1>Boutique</h1>
+      <div class="row">
+          <div class="col-4 mx-auto">
+              <label for="filterCategory">Catégories: </label>
+              <select name="listeCategories" id="listeCategories" onchange="loadProduitsParCategorie(this.value)"></select>
+          </div>
+      </div>
+    <div class="row" id="myShop">Loading ...</div>
+  </div>
+</div>
+{% endblock %}
